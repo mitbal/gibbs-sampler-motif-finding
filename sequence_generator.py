@@ -21,10 +21,9 @@ sequences are sampled from the background distribution q(x), which is
 Cat(x|theta) where theta has a Dir(theta|alphaprime) prior.
 """
 
-import numpy as np
-from numpy.random import rand
 from numpy.random import dirichlet
 from numpy.random import randint
+from sampling import sample
 
 WRITE_TO_FILE = True
 
@@ -42,20 +41,6 @@ alpha_w = [10,2,8,3]         # The alpha parameter for dirichlet prior of hidden
 
 
 ### Start the generator part
-
-def sample(alphabet, dist):
-    """ This method produce a new discrete sample list by alphabet with probability
-    distribution given by dist.
-    The length of alphabet and dist must be same."""
-    sampl = None
-    cum_dist = np.cumsum(dist)
-    r = rand()
-    for i in xrange(len(dist)):
-        if r < cum_dist[i]:
-            sampl = alphabet[i]
-            break
-    
-    return sampl
 
 # First, generate the starting position of the magic word for all sequences uniformly
 position = [0]*K
