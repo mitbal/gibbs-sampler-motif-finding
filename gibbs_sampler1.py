@@ -7,19 +7,31 @@ Created on Fri Jan 17 19:17:08 2014
 
 """
 This script implements gibbs sampling to find motif in DNA sequence. The sampler
-works with no information about probability distribution of character in the sequence, 
+works with no information about probability distribution of character in the sequence.
 """
 
 from numpy.random import randint
-from sequence_generator import sample
+from sampling import sample
 
-# The information should be provided in the beginning
+
+# Read data from file
+filename = 'a.seq'
+f = open(filename, 'r')
+
+K = int(f.readline())
+N = int(f.readline())
+w = int(f.readline())
+alphabet = list(f.readline()[:-1])
+alpha_b = f.readline()              # Not too important
+alpha_w = f.readline()              # Not too important
+
 sequences = []
-K = len(sequences)
-N = 15
-w = 6
-alphabet = ['A', 'C', 'T', 'G']
-M = len(alphabet)
+for i in xrange(K):
+    seq = f.readline()[:-1].split(',')
+    sequences += [seq]
+
+position = map(int, f.readline()[:-1].split(',') )
+f.close()
 
 
 def compute_model(sequences, pos, alphabet, w):
@@ -57,7 +69,7 @@ def compute_model(sequences, pos, alphabet, w):
             
 
 # First, initialize the state (in this case position) randomly
-pos = [randint(0,N-w+1)]
+pos = [randint(0,N-w+1) for x in xrange(K)]
 
 # Loop until converge (the burn-in phase)
 MAX_ITER = 10
@@ -68,7 +80,7 @@ for it in xrange(MAX_ITER):
         # Therefore, we exclude this sequence from model calculation
         seq_minus = sequences[:]; del seq_minus[i]
         pos_minus = pos[:]; del pos_minus[i]
-        q, p = compute_model(seq_minus, pos_minus)
+        q, p = compute_model(seq_minus, pos_minus, alphabet, w)
         
         # We try for every possible position of magic word in sequence i and
         # calculate the probability of it being as background or magic word
