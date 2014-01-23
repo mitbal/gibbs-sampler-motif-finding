@@ -12,18 +12,28 @@ derive the full conditional probability distribution and sample from there.
 """
 
 from numpy.random import randint
-from sequence_generator import sample
+from sampling import sample
 import math
+import matplotlib.pyplot as plt
 
-# Related information
+# Read data from file
+filename = 'a.seq'
+f = open(filename, 'r')
+
+K = int(f.readline())
+N = int(f.readline())
+w = int(f.readline())
+alphabet = list(f.readline()[:-1])
+alpha_b = map(float, f.readline()[:-1].split(',') )
+alpha_w = map(float, f.readline()[:-1].split(',') )
+
 sequences = []
-K = len(sequences)
-N = 15
-w = 6
-alphabet = ['A', 'C', 'T', 'G']
-M = len(alphabet)
-alpha_b = [1,1,1,1]
-alpha_w = [10,2,8,3]
+for i in xrange(K):
+    seq = f.readline()[:-1].split(',')
+    sequences += [seq]
+
+position = map(int, f.readline()[:-1].split(',') )
+f.close()
 
 def full_conditional(sequences, pos, seqth):
     
@@ -58,7 +68,7 @@ def full_conditional(sequences, pos, seqth):
                 c = sequences[seqth][j]
                 extra[c] += 1
         for j in xrange(len(alphabet)):
-            a = alphabet(j)
+            a = alphabet[j]
             pback *= math.gamma(p[a]+extra[a] + alpha_b[j]) / math.gamma(alpha_b[j])
             
         pcol = 1
@@ -67,7 +77,7 @@ def full_conditional(sequences, pos, seqth):
             pm = math.gamma(sum(alpha_w)) / math.gamma(K + sum(alpha_w))
             
             for k in xrange(len(alphabet)):
-                a = alphabet(k)
+                a = alphabet[k]
                 extra = 0
                 if sequences[seqth][i+j] == a:
                     extra = 1
@@ -82,14 +92,26 @@ def full_conditional(sequences, pos, seqth):
 
 # First, initialize the start position randomly
 pos = [randint(0, N-w+1) for x in xrange(K)]
+orig_pos = pos[:]
 
-MAX_ITER = 10
+MAX_ITER = 100
+p = [0]*(N-w)
+b = [0]*MAX_ITER
 for it in xrange(MAX_ITER):
     
     for i in xrange(K):
-        p = [0]*(N-w)
         p = full_conditional(sequences, pos, i)
         
+        total = sum(p)
+        p = map(lambda x: x/total, p)
         # Sample new position
+        #print 'p', p
         pos[i] = sample(range(N-w), p)
+    b[it] = max(p)
 
+
+# Happy printing
+print 'start pos', orig_pos
+print 'last pos', pos
+print 'true pos', position
+plt.plot(b)
