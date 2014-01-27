@@ -113,3 +113,24 @@ def sample(alphabet, dist):
             break
     
     return sampl
+
+# If this module is used as script
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) == 0:
+        w = int(sys.stdin.readline())
+        sequences = []
+        for line in sys.stdin:
+            sequences += [line]
+        
+        sampling(sequences, w)
+    elif len(sys.argv) == 1:
+        sequences = []
+        f = open(sys.argv[0], 'r')
+        w = int(f.readline())
+        for line in f.readlines():
+            sequences += [line[:-1]]
+        
+        sampling(sequences, w)
+    else:
+        print 'Error!!! Either use 1 argument or feed the data directly through standard input. For more information, read the README'
