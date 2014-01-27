@@ -117,20 +117,20 @@ def sample(alphabet, dist):
 # If this module is used as script
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) == 0:
+    if len(sys.argv) == 1:
         w = int(sys.stdin.readline())
         sequences = []
         for line in sys.stdin:
             sequences += [line]
-        
-        sampling(sequences, w)
-    elif len(sys.argv) == 1:
+        print sampling(sequences, w)
+    
+    elif len(sys.argv) == 2:
         sequences = []
-        f = open(sys.argv[0], 'r')
+        f = open(sys.argv[1], 'r')
         w = int(f.readline())
         for line in f.readlines():
             sequences += [line[:-1]]
+        print sampling(sequences, w)
         
-        sampling(sequences, w)
     else:
         print 'Error!!! Either use 1 argument or feed the data directly through standard input. For more information, read the README'
