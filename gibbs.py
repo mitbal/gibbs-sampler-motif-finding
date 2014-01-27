@@ -63,6 +63,8 @@ def sampling(sequences, w):
             # Sampling new position with regards to probability distribution Aj
             pos[i] = sample(range(N-w), Aj)
             
+    return pos
+            
 def compute_model(sequences, pos, alphabet, w):
     """
     This method compute the probability model of background and word based on data in 
