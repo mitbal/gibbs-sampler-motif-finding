@@ -31,8 +31,10 @@ def sampling(sequences, w):
     pos = [randint(0, len(seq)-w+1) for seq in sequences]  
     
     # Loop until converge (the burn-in phase)
-    MAX_ITER = 1000
-    for it in xrange(MAX_ITER):
+    last_pos = None
+    while last_pos != pos:
+        last_pos = pos[:]
+        
         # We pick the sequence, well, in sequence starting from index 0
         for i in xrange(K):
             # We sample the next position of magic word in this sequence
@@ -46,9 +48,9 @@ def sampling(sequences, w):
             # The probability for magic word is calculated by multiplying the probability
             # for each character in each position
             N = len(sequences[i])
-            qx = [1]*(N-w)
-            px = [1]*(N-w)
-            for j in xrange(N-w):
+            qx = [1]*(N-w+1)
+            px = [1]*(N-w+1)
+            for j in xrange(N-w+1):
                 for k in xrange(w):
                     c = sequences[i][j+k]
                     qx[j] = qx[j] * q[c][k]
@@ -61,8 +63,8 @@ def sampling(sequences, w):
             #print 'Aj', Aj
             
             # Sampling new position with regards to probability distribution Aj
-            pos[i] = sample(range(N-w), Aj)
-            
+            pos[i] = sample(range(N-w+1), Aj)
+        #print pos
     return pos
             
 def compute_model(sequences, pos, alphabet, w):
